@@ -37,22 +37,24 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.specs</groupId>
+            <groupId>org.scala-tools.testing</groupId>
             <artifactId>specs</artifactId>
-            <version>1.2.5</version>
-            <scope>test</scope>
+            <version>1.6.2.2_1.5.0</version>
         </dependency>
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.10</artifactId>
-            <version>2.2.6</version>
+            <artifactId>scalatest_2.11</artifactId>
+            <version>2.2.5</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- http://mvnrepository.com/artifact/joda-time/joda-time -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.9.4</version>
+        </dependency>
     </dependencies>
-
-
-
-
 
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
