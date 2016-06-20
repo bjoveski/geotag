@@ -13,8 +13,6 @@ case class Point(loc: Location, time: DateTime, accuracy: Int)
 
 case class Location(lat: Double, lon: Double)
 
-
-
 case class Image(file: File, time: DateTime)
 
 
@@ -23,7 +21,7 @@ object Decorator {
 
   // ------
   // public API
-  def addLocationMetadata(image: Image, history: History) = {
+  def addLocationMetadata(image: Image, history: LocationHistory) = {
 
     val guessOpt = findPoint(image, history)
 
@@ -35,7 +33,7 @@ object Decorator {
   // ------
   // internal stuff
 
-  private def findPoint(image: Image, history: History): Option[Point] = {
+  private def findPoint(image: Image, history: LocationHistory): Option[Point] = {
     history
       .points
       .collectFirst{case point: Point if point.time.isAfter(image.time) && point.time.isBefore(image.time.plusMinutes(10)) => point}
