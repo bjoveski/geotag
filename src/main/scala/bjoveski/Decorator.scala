@@ -55,10 +55,6 @@ object Decorator {
 
     val commands = Seq(lonRef, lon, latRef, lat)
 
-//    println(lon)
-//    lonRef.!
-//    println("DOOOOONE")
-//    lon.!
 
     println(s"$path")
     // execute the commands
@@ -66,7 +62,5 @@ object Decorator {
 
     Some(image)
   }
-
-  //   private def extractMetadata(point: Point):
 
 }
