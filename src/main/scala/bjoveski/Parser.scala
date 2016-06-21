@@ -1,12 +1,34 @@
 package bjoveski
 
+import java.io.File
+
 import net.liftweb.json._
 import org.joda.time.DateTime
+import scala.io.Source
 
 /**
   * Created by bojan on 6/16/16.
   */
-object Parser {
+object Parser extends Colors {
+
+  def parseGoogleHistoryFromPath(path: String): LocationHistory = {
+    try {
+      val folder = new File(path)
+      val historyFolder = folder.listFiles().find(f => f.getName == "Location History").get
+      val jsonFile = historyFolder.listFiles().find(f => f.getName == "LocationHistory.json").get
+
+      val lines = Source.fromFile(jsonFile).getLines().mkString("\n")
+
+      parseGoogleHistory(lines)
+    } catch {
+      case e: Exception => {
+        println(red(s"couldn't parse $path properly"))
+        e.printStackTrace()
+        throw e
+      }
+    }
+  }
+
 
   def parseGoogleHistory(s: String): LocationHistory = {
 
