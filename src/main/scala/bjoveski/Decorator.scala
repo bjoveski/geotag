@@ -17,16 +17,17 @@ case class Image(file: File, time: DateTime)
 
 
 
-object Decorator {
+object Decorator extends Util {
 
   // ------
   // public API
   def addLocationMetadata(image: Image, history: LocationHistory) = {
+    val (resultOpt, ms) = runAndTime {
+      val guessOpt = findPoint(image, history)
+      guessOpt.flatMap(guess => addMetadata(image, guess))
+    }
 
-    val guessOpt = findPoint(image, history)
-
-    val resultOpt = guessOpt.flatMap(guess => addMetadata(image, guess))
-
+    println(s"img=${image.file.getPath}, found=${resultOpt.isDefined}, time=$ms ms")
 
   }
 

@@ -14,12 +14,10 @@ object Main extends App with Colors {
   val history = Parser.parseGoogleHistoryFromPath(historyPath)
 
   images.zipWithIndex.foreach{ case (image, idx) =>
-    if (idx % 10 == 0) {
-      println(f"processed $idx%4d images")
-    }
-
+//      println(f"processed $idx%4d images")
     Decorator.addLocationMetadata(image, history)
   }
+
   println(green("done!"))
   println("######")
 

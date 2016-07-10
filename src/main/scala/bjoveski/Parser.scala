@@ -3,13 +3,14 @@ package bjoveski
 import java.io.File
 
 import net.liftweb.json._
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, Duration}
+
 import scala.io.Source
 
 /**
   * Created by bojan on 6/16/16.
   */
-object Parser extends Colors {
+object Parser extends Util with Colors {
 
   def parseGoogleHistoryFromPath(path: String): LocationHistory = {
     try {
@@ -34,23 +35,26 @@ object Parser extends Colors {
 
     implicit val formats = DefaultFormats
 
-    val ast = parse(s)
+    val (extracted, ms) = runAndTime {
+      val ast = parse(s)
 
-    val locations = (ast \ "locations").children
+      val locations = (ast \ "locations").children
 
-    val extracted = locations.map { location =>
+      locations.map { location =>
 
-      val ms = location \ "timestampMs"
-      val lat = location \ "latitudeE7"
-      val lon = location \ "longitudeE7"
-      val acc = location \ "accuracy"
+        val ms = location \ "timestampMs"
+        val lat = location \ "latitudeE7"
+        val lon = location \ "longitudeE7"
+        val acc = location \ "accuracy"
 
-      val loc = Location(lat.extract[Int], lon.extract[Int])
-      val time = new DateTime(ms.extract[String].toLong)
+        // need to multiply by 10^-7 in order to normalize
+        val loc = Location(lat.extract[Int] * 0.0000001, lon.extract[Int] * 0.0000001)
+        val time = new DateTime(ms.extract[String].toLong)
 
-      Point(loc, time, acc.extract[Int])
+        Point(loc, time, acc.extract[Int])
+      }
     }
-
+    println(yellow(s"parsed ${extracted.size} location points in ${Duration.millis(ms).toString}"))
     LocationHistory(extracted)
   }
 }
