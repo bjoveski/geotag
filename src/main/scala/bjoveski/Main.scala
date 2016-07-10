@@ -26,11 +26,3 @@ object Main extends App with Colors {
 }
 
 
-trait Colors {
-
-  private def helper(color: String, str: String) = s"$color$str${Console.RESET}"
-
-  def yellow(str: String) = helper(Console.YELLOW, str)
-  def green(str: String) = helper(Console.GREEN, str)
-  def red(str: String) = helper(Console.RED, str)
-}
