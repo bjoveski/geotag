@@ -2,7 +2,7 @@ package bjoveski
 
 import java.io.File
 
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, Duration, Interval}
 
 import sys.process._
 
@@ -34,10 +34,26 @@ object Decorator extends Util {
   // ------
   // internal stuff
 
-  private def findPoint(image: Image, history: LocationHistory): Option[Point] = {
-    history
+  // if the time is within 10 min of the picture location
+  private def findPointByTime(image: Image, history: LocationHistory): Option[Point] = {
+    val DURATION = 30
+    val interval = new Interval(image.time.minusMinutes(DURATION), image.time.plusMinutes(DURATION))
+    val neighborhood = history
       .points
-      .collectFirst{case point: Point if point.time.isAfter(image.time) && point.time.isBefore(image.time.plusMinutes(10)) => point}
+      .collect{case point if interval.contains(point.time) => point}
+      .sortBy{case point => math.abs(point.time.getMillis - image.time.getMillis)}
+
+
+    if (neighborhood.nonEmpty) {
+      println(f"found location ${new Duration(image.time, neighborhood.head.time).getMillis}%6d ms away from point. neighborhood ${neighborhood.size}")
+    }
+    neighborhood.headOption
+  }
+
+  // returns a find if the locations don't change a lot
+
+  private def findPoint(image: Image, history: LocationHistory): Option[Point] = {
+    findPointByTime(image, history)
   }
 
   /*
