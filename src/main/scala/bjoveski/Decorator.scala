@@ -9,14 +9,6 @@ import sys.process._
 /**
   * Created by bojan on 6/18/16.
   */
-case class Point(loc: Location, time: DateTime, accuracy: Int)
-
-case class Location(lat: Double, lon: Double)
-
-case class Image(file: File, time: DateTime)
-
-
-
 object Decorator extends Util {
 
   // ------

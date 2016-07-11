@@ -56,7 +56,7 @@ object Parser extends Util with Colors {
     }
     println(yellow(s"parsed ${extracted.size} location points in ${Duration.millis(ms).toString}"))
 
-    val res = LocationHistory(extracted)
+    val res = LocationHistory(extracted.toSeq)
 
 //    locationStats(res)
 

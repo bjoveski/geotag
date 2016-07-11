@@ -1,5 +1,9 @@
 package bjoveski
 
+import java.io.File
+
+import org.joda.time.DateTime
+
 
 /**
   * Created by bojan on 6/21/16.
@@ -22,5 +26,12 @@ object Main extends App with Colors {
   println("######")
 
 }
+
+
+case class Point(loc: Location, time: DateTime, accuracy: Int)
+
+case class Location(lat: Double, lon: Double)
+
+case class Image(file: File, time: DateTime)
 
 
