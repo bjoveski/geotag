@@ -1,15 +1,13 @@
 package bjoveski
 
-import java.io.File
+import org.joda.time.{Duration, Interval}
 
-import org.joda.time.{DateTime, Duration, Interval}
-
-import sys.process._
+import scala.sys.process._
 
 /**
   * Created by bojan on 6/18/16.
   */
-object Decorator extends Util {
+object Decorator extends Util with Colors {
 
   // ------
   // public API
@@ -19,8 +17,13 @@ object Decorator extends Util {
       guessOpt.flatMap(guess => addMetadata(image, guess))
     }
 
-    println(s"img=${image.file.getPath}, found=${resultOpt.isDefined}, time=$ms ms")
+    if (resultOpt.isDefined) {
+      println(green(s"img=${image.file.getPath} updated ($ms ms)\n"))
+    } else {
+      println(red(s"img=${image.file.getPath} not updated ($ms ms)\n"))
+    }
 
+    resultOpt
   }
 
   // ------
@@ -28,8 +31,8 @@ object Decorator extends Util {
 
   // if the time is within 10 min of the picture location
   private def findPointByTime(image: Image, history: LocationHistory): Option[Point] = {
-    val DURATION = 30
-    val interval = new Interval(image.time.minusMinutes(DURATION), image.time.plusMinutes(DURATION))
+    val DURATION_MINUTES = 30
+    val interval = new Interval(image.time.minusMinutes(DURATION_MINUTES), image.time.plusMinutes(DURATION_MINUTES))
     val neighborhood = history
       .points
       .collect{case point if interval.contains(point.time) => point}
@@ -56,6 +59,7 @@ object Decorator extends Util {
   private[bjoveski] def addMetadata(image: Image, guess: Point): Option[Image] = {
     val path = image.file.getAbsolutePath
 
+    // TODO: fix Ref so we can locate stuff in the other hemisphere
     val lon = s"""exiftool -GPSLongitude="${guess.loc.lon.toString}" $path"""
     val lonRef = s"exiftool -GPSLongitudeRef=East $path"
 

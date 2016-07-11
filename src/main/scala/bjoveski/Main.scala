@@ -14,15 +14,17 @@ object Main extends App with Colors {
   val photoPath = args(0)
   val historyPath = args(1)
 
-  val images = Reader.readImages(photoPath)
+  val images = IoUtil.readImages(photoPath)
   val history = Parser.parseGoogleHistoryFromPath(historyPath)
 
-  images.zipWithIndex.foreach{ case (image, idx) =>
-//      println(f"processed $idx%4d images")
+  val results = images.map{ image =>
     Decorator.addLocationMetadata(image, history)
   }
 
-  println(green("done!"))
+  println(green(s"done! (${results.count(_.isDefined)}/${images.size}) cleaning up..."))
+
+  IoUtil.cleanUp(photoPath, results)
+
   println("######")
 
 }
