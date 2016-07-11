@@ -3,7 +3,7 @@ package bjoveski
 import java.io.File
 
 import net.liftweb.json._
-import org.joda.time.{DateTime, Duration}
+import org.joda.time.{DateTime, Duration, Interval}
 
 import scala.io.Source
 
@@ -55,7 +55,32 @@ object Parser extends Util with Colors {
       }
     }
     println(yellow(s"parsed ${extracted.size} location points in ${Duration.millis(ms).toString}"))
-    LocationHistory(extracted)
+
+    val res = LocationHistory(extracted)
+
+//    locationStats(res)
+
+    res
+  }
+
+  private def locationStats(l: LocationHistory) {
+    var histogram = Map[Long, Long]()
+
+    // the points are ordered in desc order
+    l.points.sliding(2).foreach{case Seq(second, first) =>
+      val interval = new Interval(first.time, second.time)
+      val duration = interval.toDurationMillis
+
+      // 5 min buckets
+      val k = duration / (1000 * 60 * 5)
+      val v = histogram.getOrElse(k, 0L)
+      histogram = histogram + (k -> (v + 1))
+    }
+
+
+    histogram.toSeq.sortBy(_._1).foreach{case (k, v) =>
+      println(f"${k * 5}%6d -> $v%9d")
+    }
   }
 }
 
